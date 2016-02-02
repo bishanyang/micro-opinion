@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="g++ 4.2.1 x86_64-apple-darwin14.3.0 -Wall -Wno-long-long -Wpointer-arith -Wconversion -arch x86_64 -c -fPIC -DDarwin -DGNU_GCC -I../../../../../Dropbox/Documents/workspace/NELL/micro-opinion/target/nar/javah-include -I../../../../../../../Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/include -I../../../../../../../Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/include/darwin">
+      <target file="opinion_jni.o" lastModified="1523e1db7a8">
+         <source file="../../../../src/main/c++/opinion_jni.cpp" lastModified="15035886e28"/>
+      </target>
+   </processor>
+</history>
