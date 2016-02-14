@@ -1,1 +1,4 @@
+edu/cmu/ml/rtw/micro/opinion/OpinionExtractor.class
+edu/cmu/ml/rtw/micro/opinion/NarSystem.class
 edu/cmu/ml/rtw/micro/opinion/OpinionExtractor$1.class
+edu/cmu/ml/rtw/micro/opinion/OpinionExtractor$Singleton.class

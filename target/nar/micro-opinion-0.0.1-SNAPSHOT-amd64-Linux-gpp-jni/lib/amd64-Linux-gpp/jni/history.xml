@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
-   <processor signature="4.8 -shared -L/home/bishan/micro-reading/micro-opinion/src/nar/resources/aol/amd64-Linux-gpp/lib -Bdynamic -lopinion_tagger -fexceptions -lstdc++">
-      <target file="libmicro-opinion-0.0.1-SNAPSHOT.so" lastModified="152a040b408">
-         <source file="../../../../../../src/nar/resources/aol/amd64-Linux-gpp/lib/libopinion_tagger.so" lastModified="152a0403320"/>
-         <source file="../../../../obj/amd64-Linux-gpp/opinion_jni.o" lastModified="152a0063b48"/>
+   <processor signature="4.8 -shared -L/home/bishan/micro-demo/micro-opinion/src/nar/resources/aol/amd64-Linux-gpp/lib -Bdynamic -lopinion_tagger -fexceptions -lstdc++">
+      <target file="libmicro-opinion-0.0.1-SNAPSHOT.so" lastModified="152dd9fc348">
+         <source file="../../../../../../src/nar/resources/aol/amd64-Linux-gpp/lib/libopinion_tagger.so" lastModified="152dd9f7528"/>
+         <source file="../../../../obj/amd64-Linux-gpp/opinion_jni.o" lastModified="152d794d3a8"/>
       </target>
    </processor>
 </history>

@@ -113,14 +113,14 @@ public class OpinionExtractor implements AnnotatorTokenSpan<String> {
 		    	sentStr.append(word).append(" ");
 		    }
 		    sentStr.setLength(sentStr.length() - 1);
-		    inputData.append(sentStr.toString()).append("\n");
+		    inputData.append("Sent: ").append(sentStr.toString()).append("\n");
 		    
 		    StringBuilder posTagStr = new StringBuilder();
 			for (PoSTag posTag : tags) {
 				posTagStr.append(posTag).append(" ");
 			}
 			posTagStr.setLength(posTagStr.length() - 1);
-			inputData.append(posTagStr.toString()).append("\n");
+			inputData.append("POS: ").append(posTagStr.toString()).append("\n");
 			
 			StringBuilder sentLemmaStr = new StringBuilder();
 			for (int j = 0; j < words.size(); ++j) {
@@ -128,31 +128,77 @@ public class OpinionExtractor implements AnnotatorTokenSpan<String> {
 		    	sentLemmaStr.append(lemmaWord).append(" ");
 		    }
 			sentLemmaStr.setLength(sentLemmaStr.length() - 1);
-			inputData.append(sentLemmaStr.toString()).append("\n");
+			inputData.append("Lemma: ").append(sentLemmaStr.toString()).append("\n");
 			
 			inputData.append(parseTree).append("\n");
 			inputData.append(depGraph);
 			
 			inputData.append("#end sentence\n");
 		}
-		
+
 		String outputData = annotate(inputData.toString());
 		
 		List<Triple<TokenSpan, String, Double>> annotations = new ArrayList<Triple<TokenSpan, String, Double>>();
 		
+		int sentIndex = 0;
+		int tokenStart = 0;
+		int tokenEnd = 0;
+		double score = 0.0;
 		String[] opinionAnnos = outputData.split("\n");
 		for (int i = 0; i < opinionAnnos.length; ++i) {
-			String[] fields = opinionAnnos[i].split(",");
-			if (fields.length != 5) continue;
+			String[] fields = opinionAnnos[i].split("\t");
+			if (fields.length == 0) continue;
 			
-			int sentIndex = Integer.valueOf(fields[0]);
-			int tokenStart = Integer.valueOf(fields[1]);
-			int tokenEnd = Integer.valueOf(fields[2]);
-			String opinionLabel = fields[3];
-			double score = Double.valueOf(fields[4]);
+			// Read opinion frame
+			String[] subfields = fields[0].split(",");
+			if (subfields.length != 5) continue;
 			
-			annotations.add(new Triple<TokenSpan, String, Double>(new TokenSpan(document, sentIndex, tokenStart, tokenEnd), 
-					opinionLabel, score));
+			sentIndex = Integer.valueOf(subfields[0]);
+			tokenStart = Integer.valueOf(subfields[1]);
+			tokenEnd = Integer.valueOf(subfields[2]);
+			String opinionType = subfields[3];
+			score = Double.valueOf(subfields[4]);
+			
+			TokenSpan opexp = new TokenSpan(document, sentIndex, tokenStart, tokenEnd);
+			String opinionLabel = opinionType + "=" + opexp.toString();
+			
+			// Read opinion arguments
+			for (int j = 1; j < fields.length; ++j) {
+				String[] splits = fields[j].split(",");
+				if (splits.length != 5) continue;
+				
+				sentIndex = Integer.valueOf(splits[0]);
+				tokenStart = Integer.valueOf(splits[1]);
+				tokenEnd = Integer.valueOf(splits[2]);
+				TokenSpan oparg = new TokenSpan(document, sentIndex, tokenStart, tokenEnd);
+				
+				if (splits[3].contains("HolderOf")) {
+					opinionLabel += "; Holder=" + oparg.toString();
+				} else if (splits[3].contains("TargetOf")) {
+					opinionLabel += "; Target=" + oparg.toString();
+				}
+			}
+			
+			annotations.add(new Triple<TokenSpan, String, Double>(opexp, opinionLabel, score));
+			
+			// Read opinion arguments
+			/*for (int j = 1; j < fields.length; ++j) {
+				String[] splits = fields[j].split(",");
+				if (splits.length != 5) continue;
+				
+				sentIndex = Integer.valueOf(splits[0]);
+				tokenStart = Integer.valueOf(splits[1]);
+				tokenEnd = Integer.valueOf(splits[2]);
+				TokenSpan oparg = new TokenSpan(document, sentIndex, tokenStart, tokenEnd);
+				String label = "Opinion";
+				if (splits[3].contains("HolderOf")) {
+					label += "Holder=" + oparg.toString() + "; " + opinionType + "=" + opexp.toString();
+				} else if (splits[3].contains("TargetOf")) {
+					label += "Target=" + oparg.toString() + "; " + opinionType + "=" + opexp.toString();
+				}
+				score = Double.valueOf(splits[4]);
+				annotations.add(new Triple<TokenSpan, String, Double>(oparg, label, score));
+			}*/
 		}
 		
 		return annotations;
