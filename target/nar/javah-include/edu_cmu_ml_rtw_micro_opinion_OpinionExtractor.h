@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     edu_cmu_ml_rtw_micro_opinion_OpinionExtractor
  * Method:    initialize
- * Signature: (Ljava/lang/String;)Z
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL Java_edu_cmu_ml_rtw_micro_opinion_OpinionExtractor_initialize
-  (JNIEnv *, jobject, jstring);
+  (JNIEnv *, jobject, jstring, jstring, jstring, jstring, jstring);
 
 /*
  * Class:     edu_cmu_ml_rtw_micro_opinion_OpinionExtractor

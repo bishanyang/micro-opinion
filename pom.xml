@@ -48,6 +48,11 @@
       <artifactId>micro-util</artifactId>
       <version>0.0.2-SNAPSHOT</version>
     </dependency>
+    <dependency>
+ 		<groupId>edu.cmu.ml.rtw</groupId>
+ 		<artifactId>micro-opinion-data</artifactId>
+ 		<version>0.0.1-SNAPSHOT</version>
+   </dependency>
   </dependencies>
   <repositories>      
   	<repository>

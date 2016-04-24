@@ -28,7 +28,6 @@ import edu.cmu.ml.rtw.generic.util.FileUtil;
 import edu.cmu.ml.rtw.generic.util.Pair;
 import edu.cmu.ml.rtw.generic.util.Triple;
 import edu.cmu.ml.rtw.micro.opinion.NarSystem;
-import edu.stanford.nlp.process.Morphology;
 
 
 public class OpinionExtractor implements AnnotatorTokenSpan<String> {
@@ -53,9 +52,66 @@ public class OpinionExtractor implements AnnotatorTokenSpan<String> {
 
 	private OpinionExtractor() {
 		NarSystem.loadLibrary();
+		
+		StringBuffer resData = new StringBuffer();
+		StringBuffer wordvecData = new StringBuffer();
+		StringBuffer adtModel = new StringBuffer();
+		StringBuffer dseModel = new StringBuffer();
+		StringBuffer polarityModel = new StringBuffer();
+		
+		try {
+			InputStream r1 = OpinionExtractor.class.getClassLoader().getResourceAsStream("models/agent_dse_target_model");
+			BufferedReader bfr1 = new BufferedReader(new InputStreamReader(r1));
+			String line = "";
+			while ((line = bfr1.readLine()) != null) {
+				adtModel.append(line).append("\n");
+			}
+			bfr1.close();
+			
+			InputStream r2 = OpinionExtractor.class.getClassLoader().getResourceAsStream("models/dse_ese_model");
+			BufferedReader bfr2 = new BufferedReader(new InputStreamReader(r2));
+			line = "";
+			while ((line = bfr2.readLine()) != null) {
+				dseModel.append(line).append("\n");
+			}
+			bfr2.close();
+			
+			InputStream r3 = OpinionExtractor.class.getClassLoader().getResourceAsStream("models/polarity_model");
+			BufferedReader bfr3 = new BufferedReader(new InputStreamReader(r3));
+			line = "";
+			while ((line = bfr3.readLine()) != null) {
+				polarityModel.append(line).append("\n");
+			}
+			bfr3.close();
+			
+			InputStream r4 = OpinionExtractor.class.getClassLoader().getResourceAsStream("opinion_resources/featuredict");
+			BufferedReader bfr4 = new BufferedReader(new InputStreamReader(r4));
+			line = "";
+			while ((line = bfr4.readLine()) != null) {
+				resData.append(line).append("\n");
+			}
+			bfr4.close();
+			
+			InputStream r5 = OpinionExtractor.class.getClassLoader().getResourceAsStream("opinion_resources/pretrained_mpqa_embeddings");
+			BufferedReader bfr5 = new BufferedReader(new InputStreamReader(r5));
+			line = "";
+			while ((line = bfr5.readLine()) != null) {
+				wordvecData.append(line).append("\n");
+			}
+			bfr5.close();		
+		} catch (IOException ioe) {
+		    throw new RuntimeException(ioe);
+		}
+		
+		System.out.println("Finish loading opinion resources...");
+		
+		if (!initialize(resData.toString(), wordvecData.toString(),
+				adtModel.toString(), dseModel.toString(), polarityModel.toString()))
+			throw new IllegalStateException("Unable to initialize opinion extractor.");
 	}
 
-	private native boolean initialize(String configFile);
+	private native boolean initialize(String resData, String wordvecData,
+			String adtModel, String dseModel, String polarityModel);
 	private native String  annotate(String inputData);
 
 	@Override
@@ -80,23 +136,6 @@ public class OpinionExtractor implements AnnotatorTokenSpan<String> {
 
 	@Override
 	public List<Triple<TokenSpan, String, Double>> annotate(DocumentNLP document) {
-		try {
-			InputStream resource = OpinionExtractor.class.getResourceAsStream("/opinion.config");
-			BufferedReader bfr = new BufferedReader(new InputStreamReader(resource));
-			String line;
-			String configStr = "";
-			while ((line = bfr.readLine()) != null) {
-				configStr += line + "\n";
-			}
-			bfr.close();
-
-			if (!initialize(configStr))
-				throw new IllegalStateException("Unable to initialize opinion tagger.");
-			
-		} catch (IOException ioe) {
-		    throw new RuntimeException(ioe);
-		}
-		
 		StringBuilder inputData = new StringBuilder();
 		
 		for (int i = 0; i < document.getSentenceCount(); i++) {

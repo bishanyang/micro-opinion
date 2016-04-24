@@ -5,21 +5,53 @@
 #include <string.h>
 
 extern "C" {
-void set_config_path(const char* new_path);
+void initialize(const char* res, const char* wordvec,
+		const char* adt_model, const char* dse_model, const char* polarity_model);
+
 char* opinion_parse(const char* input_data);
 }
 
 JNIEXPORT jboolean JNICALL Java_edu_cmu_ml_rtw_micro_opinion_OpinionExtractor_initialize(
-		JNIEnv* env, jobject obj, jstring config_file)
+		JNIEnv* env, jobject obj, jstring res, jstring wordvec,
+		jstring adt_model, jstring dse_model, jstring polarity_model)
 {
-	const char* config_filename = env->GetStringUTFChars(config_file, 0);
-	if (config_filename == NULL) {
-		fprintf(stderr, "(JNI) initialize ERROR: Unable to retrieve Java string 'config_file'.\n");
+	const char* res_str = env->GetStringUTFChars(res, 0);
+	if (res_str == NULL) {
+		fprintf(stderr, "(JNI) annotate ERROR: Unable to retrieve Java string 'res_str'.\n");
 		return false;
 	}
-	set_config_path(config_filename);
 
-	env->ReleaseStringUTFChars(config_file, config_filename);
+	const char* wordvec_str = env->GetStringUTFChars(wordvec, 0);
+	if (wordvec_str == NULL) {
+		fprintf(stderr, "(JNI) annotate ERROR: Unable to retrieve Java string 'wordvec_str'.\n");
+		return false;
+	}
+
+	const char* adt_model_str = env->GetStringUTFChars(adt_model, 0);
+	if (adt_model_str == NULL) {
+		fprintf(stderr, "(JNI) annotate ERROR: Unable to retrieve Java string 'adt_model_str'.\n");
+		return false;
+	}
+
+	const char* dse_model_str = env->GetStringUTFChars(dse_model, 0);
+	if (dse_model_str == NULL) {
+		fprintf(stderr, "(JNI) annotate ERROR: Unable to retrieve Java string 'dse_model_str'.\n");
+		return false;
+	}
+
+	const char* polarity_model_str = env->GetStringUTFChars(polarity_model, 0);
+	if (polarity_model_str == NULL) {
+		fprintf(stderr, "(JNI) annotate ERROR: Unable to retrieve Java string 'polarity_model_str'.\n");
+		return false;
+	}
+
+	initialize(res_str, wordvec_str, adt_model_str, dse_model_str, polarity_model_str);
+
+	env->ReleaseStringUTFChars(res, res_str);
+	env->ReleaseStringUTFChars(wordvec, wordvec_str);
+	env->ReleaseStringUTFChars(adt_model, adt_model_str);
+	env->ReleaseStringUTFChars(dse_model, dse_model_str);
+	env->ReleaseStringUTFChars(polarity_model, polarity_model_str);
 
 	return true;
 }
